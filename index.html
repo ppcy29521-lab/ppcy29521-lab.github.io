@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어르신재가복지센터 - 지역사회와 함께하는 복지 서비스</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.9;
+            color: #1a1a1a;
+            background: #ffffff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            font-size: 16px;
+        }
+
+        p {
+            max-width: 70ch;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .service-detail-item p,
+        .service-main p,
+        .intro-text p {
+            max-width: 100%;
+        }
+
+        /* 관리자 모드 버튼 */
+        .admin-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            border: none;
+            padding: 1rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+            z-index: 10000;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        .admin-toggle:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 122, 255, 0.5);
+        }
+
+        .admin-mode .admin-toggle {
+            background: linear-gradient(135deg, #FF3B30, #FF9500);
+            box-shadow: 0 8px 24px rgba(255, 59, 48, 0.4);
+        }
+
+        .admin-mode .admin-toggle:hover {
+            box-shadow: 0 12px 32px rgba(255, 59, 48, 0.5);
+        }
+
+        /* 로그인 모달 */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-content h2 {
+            color: #1d1d1f;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        /* 상단 헤더 */
+        .top-header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 0.6rem 0;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .top-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .top-header-info {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .top-header-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* 메인 헤더 */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #007AFF;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.8rem;
+        }
+
+        .nav-links a {
+            color: #1d1d1f;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #007AFF;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #007AFF;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        /* 메인 비주얼 */
+        .main-visual {
+            position: relative;
+            min-height: 85vh;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(88, 86, 214, 0.05) 100%), url('assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #1d1d1f;
+            padding: 120px 2rem 80px;
+        }
+
+        .main-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.55) 100%);
+            z-index: 0;
+        }
+
+        .main-visual-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .main-visual-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 2rem;
+            font-weight: 600;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            color: #1a1a1a;
+        }
+
+        .main-visual-content p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            margin-bottom: 2.5rem;
+            color: #4a4a4a;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+
+        /* 섹션 공통 */
+        section {
+            padding: 120px 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 4.5rem;
+            color: #1a1a1a;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 2rem;
+            letter-spacing: -0.5px;
+            word-break: keep-all;
+            line-height: 1.2;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #007AFF, #5856D6);
+            border-radius: 3px;
+        }
+
+        /* 센터 소개 */
+        .intro {
+            background: #fbfbfd;
+        }
+
+        .intro-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .intro-image {
+            background: #f5f5f7;
+            height: 450px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .intro-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .intro-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .intro-text h3 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            color: #1a1a1a;
+            margin-bottom: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            word-break: keep-all;
+        }
+
+        .intro-text p {
+            margin-bottom: 2rem;
+            line-height: 2.1;
+            font-size: 1.1rem;
+            color: #4a4a4a;
+            max-width: 100%;
+            text-align: left;
+        }
+
+        .intro-boxes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .intro-box {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 0.5px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .intro-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro-box h4 {
+            color: #007AFF;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            word-break: keep-all;
+            line-height: 1.4;
+        }
+
+        .intro-box p {
+            color: #4a4a4a;
+            font-size: 1rem;
+            line-height: 1.9;
+        }
+
+        /* 서비스 섹션 */
+        .services {
+            background: #ffffff;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-main {
+            grid-column: 1 / -1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3.5rem 3rem;
+            text-align: left;
+        }
+
+        .service-main > h3 {
+            text-align: center;
+        }
+
+        .service-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3.5rem;
+        }
+
+        .service-detail-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2.5rem 2rem;
+            border-radius: 18px;
+            border: 0.5px solid rgba(0, 122, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .service-detail-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 122, 255, 0.12);
+            border-color: rgba(0, 122, 255, 0.3);
+        }
+
+        .service-detail-item h4 {
+            color: #1a1a1a;
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.3px;
+            line-height: 1.4;
+        }
+
+        .service-detail-item p {
+            color: #4a4a4a;
+            font-size: 1.05rem;
+            line-height: 2.1;
+            margin-left: 3rem;
+            margin-top: 0.5rem;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 4rem 3rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #007AFF, #5856D6);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 60px rgba(0, 122, 255, 0.15);
+            border-color: rgba(0, 122, 255, 0.2);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .service-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .service-card:hover .service-icon {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 122, 255, 0.35);
+        }
+
+        .detail-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
+
+        .detail-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .service-card h3 {
+            color: #1d1d1f;
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            word-break: keep-all;
+        }
+
+        .service-card p {
+            color: #4a4a4a;
+            line-height: 2;
+            font-size: 1.05rem;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        /* 공지사항 */
+        .notice {
+            background: #fbfbfd;
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .notice-board {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .notice-item {
+            padding: 2rem 2.5rem;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+
+        .notice-item:hover {
+            background: #f5f5f7;
+            padding-left: 3rem;
+        }
+
+        .notice-badge {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+
+        .notice-badge.공지 {
+            background: linear-gradient(135deg, #FF3B30, #FF9500);
+            box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+        }
+
+        .notice-title {
+            flex: 1;
+            font-weight: 500;
+            color: #1a1a1a;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .notice-date {
+            color: #86868b;
+            font-size: 0.95rem;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .admin-controls {
+            display: none;
+        }
+
+        .admin-mode .admin-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #34C759, #30D158);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 199, 89, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #FF3B30, #FF453A);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 59, 48, 0.4);
+        }
+
+        /* 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header h2 {
+            color: #1d1d1f;
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.3px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 0.5px solid rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-family: inherit;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            background: white;
+        }
+
+        .form-group textarea {
+            min-height: 220px;
+            resize: vertical;
+            line-height: 1.8;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4);
+        }
+
+        .btn-cancel {
+            background: #86868b;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #6e6e73;
+            transform: translateY(-2px);
+        }
+
+        /* 갤러리 */
+        .gallery {
+            background: #ffffff;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: #f5f5f7;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 0.5px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item::before {
+            content: '📷';
+            font-size: 3rem;
+            position: absolute;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .gallery-item.has-image::before {
+            display: none;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-item .admin-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+        }
+
+        /* 오시는 길 */
+        .location {
+            background: #fbfbfd;
+        }
+
+        .location-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .location-info {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .location-info h3 {
+            color: #1a1a1a;
+            margin-bottom: 2.5rem;
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            word-break: keep-all;
+            line-height: 1.3;
+        }
+
+        .info-item {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-item strong {
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            line-height: 1.5;
+        }
+
+        .info-item p {
+            color: #4a4a4a;
+            line-height: 2;
+            font-size: 1.05rem;
+            text-align: left;
+        }
+
+        .map-container {
+            background: #f5f5f7;
+            border-radius: 20px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #1d1d1f;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .footer-info p {
+            margin-bottom: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: #007AFF;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2.5rem;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .top-header-content {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-visual-content h1 {
+                font-size: 2rem;
+            }
+
+            .intro-content,
+            .location-content {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-boxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 관리자 모드 토글 버튼 -->
+    <button class="admin-toggle" onclick="openLoginModal()">관리자 로그인</button>
+
+    <!-- 로그인 모달 -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <h2>관리자 로그인</h2>
+            <div class="form-group">
+                <label>아이디</label>
+                <input type="text" id="loginId" placeholder="아이디를 입력하세요" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+            </div>
+            <div class="login-error" id="loginError">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+            <div class="modal-footer">
+                <button class="btn btn-save" onclick="login()">로그인</button>
+                <button class="btn btn-cancel" onclick="closeLoginModal()">취소</button>
+            </div>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn btn-delete" onclick="logout()" style="display: none;" id="logoutBtn">로그아웃</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 상단 헤더 -->
+    <div class="top-header">
+        <div class="top-header-content">
+            <div class="top-header-info">
+                <span>📞 063-841-8880</span>
+                <span>✉️ wk8418880@naver.com</span>
+            </div>
+            <div>평일 09:00 - 18:00</div>
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header>
+        <nav>
+            <div class="logo">어르신재가복지센터</div>
+            <ul class="nav-links">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#intro">센터소개</a></li>
+                <li><a href="#services">서비스안내</a></li>
+                <li><a href="#notice">공지사항</a></li>
+                <li><a href="#gallery">갤러리</a></li>
+                <li><a href="#location">오시는길</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 메인 비주얼 -->
+    <section class="main-visual" id="home">
+        <div class="main-visual-content">
+            <h1>어르신재가복지센터</h1>
+            <p>따뜻한 마음으로 함께하는 복지 서비스</p>
+        </div>
+    </section>
+
+    <!-- 센터 소개 -->
+    <section class="intro" id="intro">
+        <div class="container">
+            <h2 class="section-title">센터&nbsp;소개</h2>
+            <div class="intro-content">
+                <div class="intro-image">
+                    <img src="assets/center-photo.png" alt="어르신재가복지센터">
+                </div>
+                <div class="intro-text">
+                    <h3>어르신재가복지센터를&nbsp;소개합니다</h3>
+                    <p>
+                        어르신재가복지센터는 지역사회의 어르신들과 장애인들이 자신의 집에서 안전하고 건강하게 생활할 수 있도록<br>
+                        다양한 복지 서비스를 제공하는 기관입니다.
+                    </p>
+                    <p>
+                        저희 센터는 전문 인력과 체계적인 관리 시스템을 통해 고품질의 복지 서비스를 제공하며,<br>
+                        이용자와 가족들의 만족도를 최우선으로 생각합니다.
+                    </p>
+                    <div class="intro-boxes">
+                        <div class="intro-box">
+                            <h4>존중</h4>
+                            <p>이용자의 인권과 존엄을 최우선으로</p>
+                        </div>
+                        <div class="intro-box">
+                            <h4>배려</h4>
+                            <p>따뜻한 마음으로 세심한 돌봄</p>
+                        </div>
+                        <div class="intro-box">
+                            <h4>전문성</h4>
+                            <p>전문 인력의 체계적인 서비스</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 서비스 안내 -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">서비스&nbsp;안내</h2>
+            <div class="services-grid">
+                <div class="service-card service-main">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                    </div>
+                    <h3>어르신재가복지센터 방문요양 서비스</h3>
+                    <p style="font-size: 1.2rem; line-height: 2; margin-bottom: 3rem; color: #4a4a4a; text-align: center; font-weight: 500;">
+                        내 집에서 누리는 따뜻하고 전문적인 돌봄
+                    </p>
+                    <div style="max-width: 750px; margin: 0 auto 3.5rem; text-align: left;">
+                        <p style="font-size: 1.1rem; line-height: 2.1; margin-bottom: 1.5rem; color: #1a1a1a;">
+                            소중한 우리 부모님, 가장 편안한 공간인 '내 집'에서 건강하고 행복한 노후를 보내실 수 있도록, 
+                            저희 <strong style="color: #007AFF;">어르신재가복지센터</strong>가 가족의 마음으로 함께합니다.
+                        </p>
+                        <p style="font-size: 1.1rem; line-height: 2.1; color: #1a1a1a;">
+                            전문 요양보호사가 어르신의 댁으로 직접 방문하여, 세심한 일상생활 지원부터 따뜻한 정서적 교감까지, 
+                            차별화된 돌봄 서비스를 제공합니다.
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(0, 122, 255, 0.08), rgba(88, 86, 214, 0.08)); padding: 2.5rem; border-radius: 20px; margin-bottom: 3.5rem; border: 0.5px solid rgba(0, 122, 255, 0.15);">
+                        <h4 style="color: #007AFF; font-size: 1.4rem; font-weight: 600; margin-bottom: 1.2rem; text-align: center; letter-spacing: -0.3px; line-height: 1.4;">
+                            ✅ 어르신재가복지센터의 특별한 약속
+                        </h4>
+                        <p style="color: #4a4a4a; line-height: 2; text-align: center; font-size: 1.05rem; max-width: 600px; margin: 0 auto;">
+                            저희는 단순히 몸을 돌보는 것을 넘어, 어르신의 마음까지 어루만지는 서비스를 지향합니다.
+                        </p>
+                    </div>
+
+                    <div class="service-details">
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 2C7.89 2 7 2.89 7 4v1H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3V4c0-1.11-.89-2-2-2h-2V2H9v2zm0 2h2v2H9V4zm6 0h2v2h-2V4zM4 9h16v10H4V9z"/>
+                                        <circle cx="12" cy="14" r="2"/>
+                                    </svg>
+                                </span>
+                                목욕 지원
+                            </h4>
+                            <p>어르신의 안전을 최우선으로 고려하여, 편안하고 개운하게 목욕하실 수 있도록 전문 요양보호사가 세심하게 도와드립니다.<br>단순한 위생 관리를 넘어, 혈액순환 촉진과 심리적 안정감을 함께 선사합니다.</p>
+                        </div>
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/>
+                                    </svg>
+                                </span>
+                                식사 지원
+                            </h4>
+                            <p>균형 잡힌 영양은 건강의 기본입니다.<br>어르신의 기호와 건강 상태에 맞춘 식사를 정성껏 준비해 드리며, 편안하게 식사를 마칠 수 있도록 곁에서 도와드립니다.</p>
+                        </div>
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/>
+                                    </svg>
+                                </span>
+                                이동 및 보행 보조
+                            </h4>
+                            <p>거동이 불편하신 어르신도 안심하고 활동하실 수 있도록, 집 안팎에서의 모든 움직임을 안전하게 지원합니다.<br>병원 동행, 산책 등 어르신의 외출이 즐거움이 되도록 돕겠습니다.</p>
+                        </div>
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19.36 2.72L20.78 4.14l-1.47 1.47-1.42-1.42-1.41 1.41 1.42 1.42L3.85 17.85l-1.42-1.41L2 18.73l1.42 1.42 1.41-1.42 4.95 4.95 1.42-1.41-4.95-4.95L19.36 2.72zM5 19l1.41-1.41L5 16.17 3.59 17.59 5 19zm14.78-10.55l-1.41 1.41-2.83-2.83 1.41-1.41 2.83 2.83z"/>
+                                    </svg>
+                                </span>
+                                생활 지원
+                            </h4>
+                            <p>장보기, 청소, 빨래 등 어르신이 혼자 하기 힘든 일상생활의 불편함을 덜어드립니다.<br>항상 깨끗하고 쾌적한 환경에서 생활하실 수 있도록 꼼꼼하게 챙기겠습니다.</p>
+                        </div>
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19.5 3.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2v14H3v3c0 1.66 1.34 3 3 3h12c1.66 0 3-1.34 3-3V2l-1.5 1.5zM19 19c0 .55-.45 1-1 1s-1-.45-1-1v-3H8V5h11v14z"/>
+                                        <path d="M9 7h6v2H9zm7 0h2v2h-2zm-7 3h6v2H9zm7 0h2v2h-2z"/>
+                                    </svg>
+                                </span>
+                                복약 지원
+                            </h4>
+                            <p>잊기 쉽거나 번거로운 약 복용, 이제 걱정하지 마세요.<br>정해진 시간과 용법에 맞춰 약을 챙겨드려 어르신의 꾸준한 건강 관리를 돕습니다.</p>
+                        </div>
+                        <div class="service-detail-item">
+                            <h4>
+                                <span class="detail-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </span>
+                                정서 지원
+                            </h4>
+                            <p>어르신들의 가장 큰 어려움은 외로움일 수 있습니다.<br>따뜻한 말벗이 되어 대화를 나누고, 함께 웃으며 마음의 위로와 정서적 지지를 보내드립니다.<br>가족의 빈자리를 채우는 든든한 동반자가 되겠습니다.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 3.5rem; padding: 2.5rem; background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05)); border-radius: 20px;">
+                        <p style="font-size: 1.15rem; line-height: 2.1; color: #1a1a1a; font-weight: 500; max-width: 700px; margin: 0 auto;">
+                            소중한 부모님을 위한 최고의 선택, <strong style="color: #007AFF;">어르신재가복지센터</strong>가 정성과 전문성으로 보답하겠습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 공지사항 -->
+    <section class="notice" id="notice">
+        <div class="container">
+            <div class="notice-header">
+                <h2 class="section-title" style="margin-bottom: 0;">공지사항</h2>
+                <div class="admin-controls">
+                    <button class="btn btn-add" onclick="openNoticeModal()">+ 공지사항 추가</button>
+                    <button class="btn" style="background: #27ae60; color: white;" onclick="downloadJSON()">📥 JSON 다운로드</button>
+                </div>
+            </div>
+            <div class="notice-board" id="noticeBoard">
+                <!-- 공지사항이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 갤러리 -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="gallery-header">
+                <h2 class="section-title" style="margin-bottom: 0;">활동&nbsp;갤러리</h2>
+                <div class="admin-controls">
+                    <button class="btn btn-add" onclick="openGalleryModal()">+ 사진 추가</button>
+                    <button class="btn" style="background: #27ae60; color: white;" onclick="downloadJSON()">📥 JSON 다운로드</button>
+                </div>
+            </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- 갤러리 항목이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 오시는 길 -->
+    <section class="location" id="location">
+        <div class="container">
+            <h2 class="section-title">오시는&nbsp;길</h2>
+            <div class="location-content">
+                <div class="location-info">
+                    <h3>연락처 정보</h3>
+                    <div class="info-item">
+                        <strong>주소</strong>
+                        <p>전북특별자치도 익산시<br>선화로69길 7</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>전화</strong>
+                        <p>063-841-8880</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>이메일</strong>
+                        <p>wk8418880@naver.com</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>운영시간</strong>
+                        <p>평일 09:00 - 18:00</p>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <img src="assets/map.png" alt="오시는 길 지도">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">어르신재가복지센터</div>
+                <p>전북특별자치도 익산시 선화로69길 7</p>
+                <p>전화: 063-841-8880 | 이메일: wk8418880@naver.com</p>
+                <p>운영시간: 평일 09:00 - 18:00</p>
+            </div>
+            <div class="footer-section">
+                <h4>서비스</h4>
+                <ul>
+                    <li><a href="#services">방문요양</a></li>
+                    <li><a href="#services">방문급여</a></li>
+                    <li><a href="#services">방문간호</a></li>
+                    <li><a href="#services">주간보호</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>센터안내</h4>
+                <ul>
+                    <li><a href="#intro">센터소개</a></li>
+                    <li><a href="#notice">공지사항</a></li>
+                    <li><a href="#gallery">갤러리</a></li>
+                    <li><a href="#location">오시는길</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 어르신재가복지센터. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 공지사항 모달 -->
+    <div class="modal" id="noticeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="noticeModalTitle">공지사항</h2>
+                <button class="close-btn" onclick="closeNoticeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="noticeModalBody">
+                <div class="form-group">
+                    <label>분류</label>
+                    <select id="noticeType">
+                        <option value="공지">공지</option>
+                        <option value="안내">안내</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" id="noticeTitle" placeholder="제목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea id="noticeContent" placeholder="내용을 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>날짜</label>
+                    <input type="date" id="noticeDate">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-save" onclick="saveNotice()">저장</button>
+                <button class="btn btn-cancel" onclick="closeNoticeModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 갤러리 모달 -->
+    <div class="modal" id="galleryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="galleryModalTitle">갤러리</h2>
+                <button class="close-btn" onclick="closeGalleryModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="galleryModalBody">
+                <div class="form-group">
+                    <label>이미지 URL</label>
+                    <input type="text" id="galleryImageUrl" placeholder="이미지 URL을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label>또는 이미지 파일 선택</label>
+                    <input type="file" id="galleryImageFile" accept="image/*">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-save" onclick="saveGallery()">저장</button>
+                <button class="btn btn-cancel" onclick="closeGalleryModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 관리자 계정 정보
+        const ADMIN_ID = 'pcy6848';
+        const ADMIN_PASSWORD = 'psj@30303';
+
+        // 초기 데이터 (한 번만 사용)
+        const INITIAL_NOTICES = [
+            { id: 1, type: '공지', title: '2026년 상반기 서비스 이용 안내', content: '2026년 상반기 서비스 이용에 대한 안내입니다.', date: '2026-01-15' },
+            { id: 2, type: '공지', title: '신규 요양보호사 채용 공고', content: '신규 요양보호사를 채용합니다.', date: '2026-01-10' },
+            { id: 3, type: '안내', title: '설날 연휴 서비스 운영 안내', content: '설날 연휴 기간 중 서비스 운영 안내입니다.', date: '2026-01-05' },
+            { id: 4, type: '안내', title: '겨울철 안전사고 예방 안내', content: '겨울철 안전사고 예방에 대한 안내입니다.', date: '2025-12-28' }
+        ];
+
+        // JSON 파일에서 데이터 로드 (GitHub Pages용)
+        async function loadDataFromJSON() {
+            try {
+                const response = await fetch('data.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                }
+            } catch (e) {
+                console.warn('JSON 파일을 불러올 수 없습니다. 초기 데이터를 사용합니다.', e);
+            }
+            return null;
+        }
+
+        // 데이터 로드
+        async function loadData() {
+            // 먼저 JSON 파일에서 로드 시도
+            const jsonData = await loadDataFromJSON();
+            
+            if (jsonData) {
+                // JSON 파일에서 로드 성공
+                notices = Array.isArray(jsonData.notices) ? jsonData.notices : [];
+                gallery = Array.isArray(jsonData.gallery) ? jsonData.gallery : [];
+            } else {
+                // JSON 파일이 없으면 로컬스토리지에서 로드
+                try {
+                    const noticesData = localStorage.getItem('notices');
+                    notices = noticesData ? JSON.parse(noticesData) : INITIAL_NOTICES;
+                    if (!Array.isArray(notices)) {
+                        notices = INITIAL_NOTICES;
+                    }
+                } catch (e) {
+                    console.error('공지사항 로드 오류:', e);
+                    notices = INITIAL_NOTICES;
+                }
+                
+                try {
+                    const galleryData = localStorage.getItem('gallery');
+                    gallery = galleryData ? JSON.parse(galleryData) : [];
+                    if (!Array.isArray(gallery)) {
+                        gallery = [];
+                    }
+                } catch (e) {
+                    console.error('갤러리 로드 오류:', e);
+                    gallery = [];
+                }
+            }
+            
+            // 갤러리 데이터 정리
+            let maxId = 0;
+            gallery.forEach(item => {
+                if (item && typeof item.id === 'number' && item.id > maxId) {
+                    maxId = item.id;
+                }
+            });
+            
+            gallery = gallery.map((item, index) => {
+                if (!item || typeof item !== 'object') {
+                    maxId++;
+                    return { id: maxId, image: '' };
+                }
+                if (!item.id || typeof item.id !== 'number') {
+                    maxId++;
+                    return { ...item, id: maxId };
+                }
+                return item;
+            }).filter(item => item && item.image);
+        }
+
+        // JSON 파일 다운로드 (관리자가 수정한 데이터를 GitHub에 커밋하기 위해)
+        function downloadJSON() {
+            const data = {
+                notices: notices,
+                gallery: gallery
+            };
+            
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('data.json 파일이 다운로드되었습니다.\n이 파일을 GitHub 저장소의 루트에 업로드하시면 모든 사용자에게 반영됩니다.');
+        }
+
+        let notices = [];
+        let gallery = [];
+        let currentEditingNoticeId = null;
+        let currentEditingGalleryId = null;
+        let isAdminMode = false;
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadData();
+            
+            // 세션 스토리지에서 관리자 모드 상태 확인
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                isAdminMode = true;
+                document.body.classList.add('admin-mode');
+                document.querySelector('.admin-toggle').textContent = '로그아웃';
+            }
+            
+            renderNotices();
+            renderGallery();
+        });
+
+        // 로그인 모달 열기
+        function openLoginModal() {
+            if (isAdminMode) {
+                logout();
+                return;
+            }
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('loginError').classList.remove('show');
+            document.getElementById('loginId').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // 로그인 모달 닫기
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        // 로그인
+        function login() {
+            const id = document.getElementById('loginId').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (id === ADMIN_ID && password === ADMIN_PASSWORD) {
+                isAdminMode = true;
+                document.body.classList.add('admin-mode');
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.querySelector('.admin-toggle').textContent = '로그아웃';
+                closeLoginModal();
+                errorDiv.classList.remove('show');
+            } else {
+                errorDiv.classList.add('show');
+            }
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                isAdminMode = false;
+                document.body.classList.remove('admin-mode');
+                sessionStorage.removeItem('adminLoggedIn');
+                document.querySelector('.admin-toggle').textContent = '관리자 로그인';
+            }
+        }
+
+        // Enter 키로 로그인
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginId = document.getElementById('loginId');
+            const loginPassword = document.getElementById('loginPassword');
+            
+            if (loginId && loginPassword) {
+                loginId.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        loginPassword.focus();
+                    }
+                });
+                
+                loginPassword.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        login();
+                    }
+                });
+            }
+        });
+
+        // 공지사항 렌더링
+        function renderNotices() {
+            const board = document.getElementById('noticeBoard');
+            board.innerHTML = '';
+            
+            notices.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            notices.forEach(notice => {
+                const item = document.createElement('div');
+                item.className = 'notice-item';
+                item.onclick = () => viewNotice(notice.id);
+                
+                item.innerHTML = `
+                    <span class="notice-badge ${notice.type}">${notice.type}</span>
+                    <span class="notice-title">${notice.title}</span>
+                    <span class="notice-date">${formatDate(notice.date)}</span>
+                    <div class="admin-controls" onclick="event.stopPropagation()">
+                        <button class="btn btn-edit" onclick="editNotice(${notice.id})">수정</button>
+                        <button class="btn btn-delete" onclick="deleteNotice(${notice.id})">삭제</button>
+                    </div>
+                `;
+                board.appendChild(item);
+            });
+        }
+
+        // 갤러리 렌더링
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            if (!grid) {
+                console.error('갤러리 그리드를 찾을 수 없습니다.');
+                return;
+            }
+            
+            try {
+                grid.innerHTML = '';
+                
+                // gallery가 배열인지 확인
+                if (!Array.isArray(gallery)) {
+                    console.warn('갤러리 데이터가 배열이 아닙니다. 초기화합니다.');
+                    gallery = [];
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                    return;
+                }
+                
+                // 유효한 항목만 필터링
+                const validGallery = gallery.filter(item => {
+                    return item && typeof item === 'object' && item.id && item.image;
+                });
+                
+                validGallery.forEach((item) => {
+                    try {
+                        const galleryItem = document.createElement('div');
+                        galleryItem.className = 'gallery-item' + (item.image ? ' has-image' : '');
+                        galleryItem.onclick = () => {
+                            if (item.id) {
+                                viewGallery(item.id);
+                            }
+                        };
+                        
+                        const imageHtml = item.image ? 
+                            `<img src="${item.image.replace(/"/g, '&quot;')}" alt="갤러리 이미지" onerror="this.style.display='none'; this.parentElement.classList.remove('has-image');">` : 
+                            '';
+                        
+                        galleryItem.innerHTML = `
+                            ${imageHtml}
+                            <div class="admin-controls" onclick="event.stopPropagation()">
+                                <button class="btn btn-edit" onclick="editGallery(${item.id})">수정</button>
+                                <button class="btn btn-delete" onclick="deleteGallery(${item.id})">삭제</button>
+                            </div>
+                        `;
+                        grid.appendChild(galleryItem);
+                    } catch (itemError) {
+                        console.error('갤러리 항목 렌더링 오류:', itemError, item);
+                    }
+                });
+                
+                // 유효하지 않은 항목이 있으면 정리
+                if (validGallery.length !== gallery.length) {
+                    gallery = validGallery;
+                    try {
+                        localStorage.setItem('gallery', JSON.stringify(gallery));
+                    } catch (e) {
+                        console.error('갤러리 정리 후 저장 오류:', e);
+                    }
+                }
+            } catch (error) {
+                console.error('갤러리 렌더링 오류:', error);
+                alert('갤러리를 표시하는 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 공지사항 보기
+        function viewNotice(id) {
+            const notice = notices.find(n => n.id === id);
+            if (!notice) return;
+            
+            document.getElementById('noticeModalTitle').textContent = notice.title;
+            document.getElementById('noticeModalBody').innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <span class="notice-badge ${notice.type}">${notice.type}</span>
+                    <span style="color: #999; margin-left: 1rem;">${formatDate(notice.date)}</span>
+                </div>
+                <div style="line-height: 1.8; white-space: pre-wrap;">${notice.content}</div>
+            `;
+            document.getElementById('noticeModal').classList.add('active');
+        }
+
+        // 갤러리 보기
+        function viewGallery(id) {
+            const item = gallery.find(g => g.id === id);
+            if (!item) return;
+            
+            document.getElementById('galleryModalTitle').textContent = '갤러리';
+            document.getElementById('galleryModalBody').innerHTML = `
+                <div style="text-align: center;">
+                    <img src="${item.image}" alt="갤러리 이미지" style="max-width: 100%; border-radius: 10px;">
+                </div>
+            `;
+            document.getElementById('galleryModal').classList.add('active');
+        }
+
+        // 공지사항 추가 모달 열기
+        function openNoticeModal() {
+            currentEditingNoticeId = null;
+            document.getElementById('noticeModalTitle').textContent = '공지사항 추가';
+            document.getElementById('noticeModalBody').innerHTML = `
+                <div class="form-group">
+                    <label>분류</label>
+                    <select id="noticeType">
+                        <option value="공지">공지</option>
+                        <option value="안내">안내</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" id="noticeTitle" placeholder="제목을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea id="noticeContent" placeholder="내용을 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>날짜</label>
+                    <input type="date" id="noticeDate" value="${new Date().toISOString().split('T')[0]}">
+                </div>
+            `;
+            document.getElementById('noticeModal').classList.add('active');
+        }
+
+        // 공지사항 수정
+        function editNotice(id) {
+            const notice = notices.find(n => n.id === id);
+            if (!notice) return;
+            
+            currentEditingNoticeId = id;
+            document.getElementById('noticeModalTitle').textContent = '공지사항 수정';
+            document.getElementById('noticeModalBody').innerHTML = `
+                <div class="form-group">
+                    <label>분류</label>
+                    <select id="noticeType">
+                        <option value="공지" ${notice.type === '공지' ? 'selected' : ''}>공지</option>
+                        <option value="안내" ${notice.type === '안내' ? 'selected' : ''}>안내</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" id="noticeTitle" value="${notice.title}">
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea id="noticeContent">${notice.content}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>날짜</label>
+                    <input type="date" id="noticeDate" value="${notice.date}">
+                </div>
+            `;
+            document.getElementById('noticeModal').classList.add('active');
+        }
+
+        // 공지사항 저장
+        function saveNotice() {
+            const type = document.getElementById('noticeType').value;
+            const title = document.getElementById('noticeTitle').value;
+            const content = document.getElementById('noticeContent').value;
+            const date = document.getElementById('noticeDate').value;
+            
+            if (!title || !content || !date) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+            
+            if (currentEditingNoticeId) {
+                const index = notices.findIndex(n => n.id === currentEditingNoticeId);
+                notices[index] = { id: currentEditingNoticeId, type, title, content, date };
+            } else {
+                const newId = notices.length > 0 ? Math.max(...notices.map(n => n.id)) + 1 : 1;
+                notices.push({ id: newId, type, title, content, date });
+            }
+            
+            // 로컬스토리지에 저장 (임시)
+            try {
+                localStorage.setItem('notices', JSON.stringify(notices));
+            } catch (e) {
+                console.error('로컬스토리지 저장 오류:', e);
+            }
+            
+            renderNotices();
+            closeNoticeModal();
+            
+            // 관리자에게 JSON 다운로드 안내
+            if (isAdminMode) {
+                setTimeout(() => {
+                    if (confirm('변경사항이 저장되었습니다.\nJSON 파일을 다운로드하여 GitHub에 업로드하시겠습니까?')) {
+                        downloadJSON();
+                    }
+                }, 500);
+            }
+        }
+
+        // 공지사항 삭제
+        function deleteNotice(id) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                notices = notices.filter(n => n.id !== id);
+                localStorage.setItem('notices', JSON.stringify(notices));
+                renderNotices();
+            }
+        }
+
+        // 공지사항 모달 닫기
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').classList.remove('active');
+        }
+
+        // 갤러리 추가 모달 열기
+        function openGalleryModal() {
+            currentEditingGalleryId = null;
+            document.getElementById('galleryModalTitle').textContent = '갤러리 추가';
+            document.getElementById('galleryModalBody').innerHTML = `
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin-bottom: 1rem; font-size: 0.9rem; color: #856404; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ 중요 안내:</strong><br>
+                    GitHub Pages 배포를 위해 <strong>이미지 URL만 사용</strong>해주세요.<br>
+                    이미지를 GitHub 저장소의 <code>assets/images/</code> 폴더에 업로드한 후 URL을 입력하세요.<br>
+                    예: <code>https://사용자명.github.io/저장소명/assets/images/photo1.jpg</code>
+                </div>
+                <div class="form-group">
+                    <label>이미지 URL *</label>
+                    <input type="text" id="galleryImageUrl" placeholder="https://사용자명.github.io/저장소명/assets/images/photo.jpg" required>
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        GitHub 저장소에 업로드한 이미지의 전체 URL을 입력하세요
+                    </small>
+                </div>
+            `;
+            document.getElementById('galleryModal').classList.add('active');
+        }
+
+        // 이미지 파일 업로드는 GitHub Pages 배포를 위해 제거됨
+        // 이미지는 GitHub 저장소에 업로드한 후 URL을 사용해야 합니다
+
+        // 갤러리 수정
+        function editGallery(id) {
+            const item = gallery.find(g => g.id === id);
+            if (!item) return;
+            
+            currentEditingGalleryId = id;
+            document.getElementById('galleryModalTitle').textContent = '갤러리 수정';
+            document.getElementById('galleryModalBody').innerHTML = `
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin-bottom: 1rem; font-size: 0.9rem; color: #856404; border-left: 4px solid #ffc107;">
+                    <strong>⚠️ 중요 안내:</strong><br>
+                    GitHub Pages 배포를 위해 <strong>이미지 URL만 사용</strong>해주세요.<br>
+                    이미지를 GitHub 저장소의 <code>assets/images/</code> 폴더에 업로드한 후 URL을 입력하세요.
+                </div>
+                <div class="form-group">
+                    <label>이미지 URL *</label>
+                    <input type="text" id="galleryImageUrl" value="${(item.image || '').replace(/"/g, '&quot;')}" placeholder="https://사용자명.github.io/저장소명/assets/images/photo.jpg" required>
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        GitHub 저장소에 업로드한 이미지의 전체 URL을 입력하세요
+                    </small>
+                </div>
+            `;
+            document.getElementById('galleryModal').classList.add('active');
+        }
+
+        // 갤러리 저장
+        function saveGallery() {
+            const imageUrlInput = document.getElementById('galleryImageUrl');
+            if (!imageUrlInput) {
+                alert('입력 필드를 찾을 수 없습니다.');
+                return;
+            }
+            
+            const imageUrl = imageUrlInput.value.trim();
+            
+            if (!imageUrl) {
+                alert('이미지 URL을 입력해주세요.');
+                return;
+            }
+            
+            // URL 형식 검증
+            if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+                if (confirm('입력하신 값이 URL 형식이 아닙니다.\n계속하시겠습니까?')) {
+                    // data:image 형식(base64)은 허용하지 않음
+                    if (imageUrl.startsWith('data:image/')) {
+                        alert('GitHub Pages 배포를 위해 이미지 URL만 사용할 수 있습니다.\n이미지를 GitHub 저장소에 업로드한 후 URL을 입력해주세요.');
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            }
+            
+            // gallery 배열이 유효한지 확인
+            if (!Array.isArray(gallery)) {
+                gallery = [];
+            }
+            
+            try {
+                if (currentEditingGalleryId) {
+                    // 수정 모드
+                    const index = gallery.findIndex(g => g && g.id === currentEditingGalleryId);
+                    if (index !== -1) {
+                        gallery[index] = { id: currentEditingGalleryId, image: imageUrl };
+                    } else {
+                        alert('수정할 항목을 찾을 수 없습니다.');
+                        return;
+                    }
+                } else {
+                    // 추가 모드 - ID 생성
+                    let newId;
+                    if (gallery.length === 0) {
+                        newId = 1;
+                    } else {
+                        // 유효한 ID만 필터링하여 최대값 찾기
+                        const validIds = gallery
+                            .filter(g => g && typeof g.id === 'number')
+                            .map(g => g.id);
+                        
+                        if (validIds.length === 0) {
+                            newId = 1;
+                        } else {
+                            newId = Math.max(...validIds) + 1;
+                        }
+                    }
+                    
+                    gallery.push({ id: newId, image: imageUrl });
+                }
+                
+                // 로컬스토리지에 저장 (임시)
+                try {
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                } catch (e) {
+                    console.error('로컬스토리지 저장 오류:', e);
+                }
+                
+                renderGallery();
+                closeGalleryModal();
+                
+                // 관리자에게 JSON 다운로드 안내
+                if (isAdminMode) {
+                    setTimeout(() => {
+                        if (confirm('변경사항이 저장되었습니다.\nJSON 파일을 다운로드하여 GitHub에 업로드하시겠습니까?')) {
+                            downloadJSON();
+                        }
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('갤러리 저장 오류:', error);
+                alert('갤러리 저장 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 갤러리 삭제
+        function deleteGallery(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            try {
+                if (!Array.isArray(gallery)) {
+                    gallery = [];
+                }
+                
+                const beforeLength = gallery.length;
+                gallery = gallery.filter(g => g && g.id !== id);
+                
+                if (gallery.length === beforeLength) {
+                    alert('삭제할 항목을 찾을 수 없습니다.');
+                    return;
+                }
+                
+                try {
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                } catch (e) {
+                    console.error('갤러리 삭제 후 저장 오류:', e);
+                    alert('삭제 후 저장 중 오류가 발생했습니다.');
+                }
+                
+                renderGallery();
+            } catch (error) {
+                console.error('갤러리 삭제 오류:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 갤러리 모달 닫기
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').classList.remove('active');
+        }
+
+        // 날짜 포맷
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}.${month}.${day}`;
+        }
+
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 100;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('noticeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeNoticeModal();
+            }
+        });
+
+        document.getElementById('galleryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeGalleryModal();
+            }
+        });
+
+        // 로그인 모달 외부 클릭 시 닫기
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+    </script>
+</body>
+</html>
