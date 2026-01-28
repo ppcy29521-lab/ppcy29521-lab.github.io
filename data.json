@@ -29,5 +29,14 @@
       "date": "2025-12-28"
     }
   ],
-  "gallery": []
+  "gallery": [
+    {
+      "id": 1,
+      "image": "https://raw.githubusercontent.com/ppcy29521-lab/ppcy29521-lab.github.io/refs/heads/main/assets/Screenshot_20260128_085244_PASS.jpg"
+    },
+    {
+      "id": 2,
+      "image": "https://github.com/ppcy29521-lab/ppcy29521-lab.github.io/blob/main/assets/1769560662258.jpg?raw=true"
+    }
+  ]
 }
