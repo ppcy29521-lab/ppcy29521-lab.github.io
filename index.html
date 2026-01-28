@@ -1582,6 +1582,7 @@
                 <div class="admin-controls">
                     <button class="btn btn-add" onclick="openNoticeModal()">+ 공지사항 추가</button>
                     <button class="btn" style="background: #27ae60; color: white;" onclick="downloadJSON()">📥 JSON 다운로드</button>
+                    <button class="btn" style="background: #3498db; color: white;" onclick="refreshData()">🔄 데이터 새로고침</button>
                 </div>
             </div>
             <div class="notice-board" id="noticeBoard">
@@ -1598,6 +1599,7 @@
                 <div class="admin-controls">
                     <button class="btn btn-add" onclick="openGalleryModal()">+ 사진 추가</button>
                     <button class="btn" style="background: #27ae60; color: white;" onclick="downloadJSON()">📥 JSON 다운로드</button>
+                    <button class="btn" style="background: #3498db; color: white;" onclick="refreshData()">🔄 데이터 새로고침</button>
                 </div>
             </div>
             <div class="gallery-grid" id="galleryGrid">
@@ -1756,10 +1758,22 @@
         // JSON 파일에서 데이터 로드 (GitHub Pages용)
         async function loadDataFromJSON() {
             try {
-                const response = await fetch('data.json');
+                // 캐시 방지를 위해 타임스탬프 추가
+                const timestamp = new Date().getTime();
+                const response = await fetch(`data.json?t=${timestamp}`, {
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('JSON 파일 로드 성공:', data);
                     return data;
+                } else {
+                    console.warn('JSON 파일 응답 오류:', response.status, response.statusText);
                 }
             } catch (e) {
                 console.warn('JSON 파일을 불러올 수 없습니다. 초기 데이터를 사용합니다.', e);
@@ -1769,15 +1783,25 @@
 
         // 데이터 로드
         async function loadData() {
-            // 먼저 JSON 파일에서 로드 시도
+            // 먼저 JSON 파일에서 로드 시도 (항상 최신 데이터를 가져오기 위해)
             const jsonData = await loadDataFromJSON();
             
             if (jsonData) {
                 // JSON 파일에서 로드 성공
+                console.log('JSON 파일에서 데이터 로드 완료');
                 notices = Array.isArray(jsonData.notices) ? jsonData.notices : [];
                 gallery = Array.isArray(jsonData.gallery) ? jsonData.gallery : [];
+                
+                // JSON 파일에서 로드한 데이터를 localStorage에도 저장 (백업용)
+                try {
+                    localStorage.setItem('notices', JSON.stringify(notices));
+                    localStorage.setItem('gallery', JSON.stringify(gallery));
+                } catch (e) {
+                    console.warn('localStorage 저장 실패 (무시 가능):', e);
+                }
             } else {
                 // JSON 파일이 없으면 로컬스토리지에서 로드
+                console.log('JSON 파일을 찾을 수 없어 localStorage에서 로드합니다.');
                 try {
                     const noticesData = localStorage.getItem('notices');
                     notices = noticesData ? JSON.parse(noticesData) : INITIAL_NOTICES;
@@ -1840,7 +1864,25 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('data.json 파일이 다운로드되었습니다.\n이 파일을 GitHub 저장소의 루트에 업로드하시면 모든 사용자에게 반영됩니다.');
+            alert('data.json 파일이 다운로드되었습니다.\n\n📌 업로드 방법:\n1. GitHub 저장소로 이동\n2. "Add file" → "Upload files"\n3. 다운로드한 data.json 파일 업로드\n4. "Commit changes" 클릭\n\n⚠️ 중요: 업로드 후 1-2분 정도 기다린 후\n브라우저를 새로고침(Ctrl+F5)하세요!');
+        }
+
+        // 데이터 강제 새로고침 (JSON 파일 업데이트 후 사용)
+        async function refreshData() {
+            if (confirm('서버의 최신 데이터를 불러오시겠습니까?\n(JSON 파일을 업데이트한 경우 사용하세요)')) {
+                // localStorage 초기화 (JSON 파일을 우선 로드하기 위해)
+                try {
+                    localStorage.removeItem('notices');
+                    localStorage.removeItem('gallery');
+                } catch (e) {
+                    console.warn('localStorage 초기화 실패:', e);
+                }
+                
+                await loadData();
+                renderNotices();
+                renderGallery();
+                alert('데이터를 새로고침했습니다!');
+            }
         }
 
         let notices = [];
@@ -1851,7 +1893,9 @@
 
         // 초기화
         document.addEventListener('DOMContentLoaded', async function() {
+            console.log('페이지 로드 시작');
             await loadData();
+            console.log('데이터 로드 완료 - 공지사항:', notices.length, '개, 갤러리:', gallery.length, '개');
             
             // 세션 스토리지에서 관리자 모드 상태 확인
             if (sessionStorage.getItem('adminLoggedIn') === 'true') {
@@ -1862,6 +1906,17 @@
             
             renderNotices();
             renderGallery();
+            console.log('렌더링 완료');
+        });
+
+        // 페이지 포커스 시 데이터 새로고침 (JSON 파일이 업데이트되었을 수 있음)
+        window.addEventListener('focus', async function() {
+            // 관리자 모드가 아닐 때만 자동 새로고침 (관리자가 작업 중일 수 있음)
+            if (!isAdminMode) {
+                await loadData();
+                renderNotices();
+                renderGallery();
+            }
         });
 
         // 로그인 모달 열기
